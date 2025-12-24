@@ -4,6 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>🎁 A Winter Night in London</title>
   <meta name="description" content="A London weekend reveal." />
   <style>
@@ -858,5 +860,10 @@
 
     setHintForPage(0);
   </script>
+    <script>
+  window.addEventListener("load", () => {
+    setTimeout(() => window.scrollTo(0, 1), 0);
+  });
+</script>
 </body>
 </html>
