@@ -1,0 +1,862 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
+  <title>🎁 A Winter Night in London</title>
+  <meta name="description" content="A London weekend reveal." />
+  <style>
+    :root{
+      --bgA:#050814;
+      --bgC:#120a22;
+
+      --card: rgba(10, 14, 28, .62);
+      --border: rgba(255,255,255,.14);
+      --text: rgba(245,247,255,.92);
+      --muted: rgba(220,228,255,.70);
+
+      --gold: #f3d28b;
+      --ice: #b9d8ff;
+      --mint: #8ff1de;
+
+      --shadow: 0 30px 90px rgba(0,0,0,.55);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      overflow:hidden;
+
+      background:
+        radial-gradient(1200px 800px at 15% 20%, rgba(79, 122, 255, .16), transparent 58%),
+        radial-gradient(1000px 720px at 82% 35%, rgba(255, 209, 150, .10), transparent 60%),
+        radial-gradient(900px 700px at 55% 95%, rgba(162, 104, 255, .10), transparent 62%),
+        linear-gradient(160deg, var(--bgC), var(--bgA));
+    }
+
+    .sheen{
+      position: fixed; inset:-25%;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 420px at 20% 10%, rgba(243,210,139,.10), transparent 60%),
+        radial-gradient(820px 420px at 70% 18%, rgba(185,216,255,.10), transparent 58%),
+        radial-gradient(900px 520px at 55% 85%, rgba(143,241,222,.08), transparent 62%);
+      filter: blur(2px);
+      opacity:.85;
+      animation: breathe 9s ease-in-out infinite;
+    }
+    @keyframes breathe{
+      0%,100% { transform: translate3d(0,0,0) scale(1); opacity:.78; }
+      50%     { transform: translate3d(0,-6px,0) scale(1.02); opacity:.92; }
+    }
+
+    .snow{
+      position:fixed; inset:0; pointer-events:none; opacity:.38;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, #fff8, transparent 55%),
+        radial-gradient(1.5px 1.5px at 70px 90px, #fff7, transparent 55%),
+        radial-gradient(1.2px 1.2px at 120px 50px, #fff6, transparent 55%),
+        radial-gradient(2px 2px at 160px 120px, #fff7, transparent 55%),
+        radial-gradient(1.3px 1.3px at 210px 20px, #fff6, transparent 55%),
+        radial-gradient(1.8px 1.8px at 260px 100px, #fff7, transparent 55%);
+      background-size: 320px 180px;
+      animation: drift 10s linear infinite;
+    }
+    @keyframes drift{ from{ transform: translateY(-50px); } to{ transform: translateY(50px); } }
+
+    .stage{
+      position:relative;
+      height:100%;
+      width:100%;
+      display:grid;
+      place-items:center;
+      padding: max(22px, env(safe-area-inset-top)) 16px max(22px, env(safe-area-inset-bottom));
+    }
+
+    .page{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      padding: max(26px, env(safe-area-inset-top)) 16px max(26px, env(safe-area-inset-bottom));
+      opacity:0;
+      transform: translateY(16px) scale(.985);
+      filter: blur(10px);
+      pointer-events:none;
+      transition: opacity 900ms ease, transform 900ms ease, filter 900ms ease;
+    }
+    .page.active{
+      opacity:1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+      pointer-events:auto;
+    }
+
+    .card{
+      width:min(1000px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-120px -120px auto auto;
+      width:360px;
+      height:360px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(243,210,139,.20), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(185,216,255,.16), transparent 58%),
+        radial-gradient(circle at 45% 80%, rgba(143,241,222,.10), transparent 62%);
+      transform: rotate(14deg);
+      pointer-events:none;
+    }
+
+    .inner{
+      padding: 28px 22px 22px;
+    }
+    @media (min-width: 720px){
+      .inner{ padding: 34px 34px 28px; }
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-size: 12px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(230,236,255,.74);
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+
+    .title{
+      margin:0 0 10px;
+      font-size: clamp(26px, 3.6vw, 46px);
+      letter-spacing: .2px;
+      line-height:1.06;
+    }
+
+    .lead{
+      margin:0;
+      max-width: 80ch;
+      color: var(--muted);
+      line-height:1.6;
+      font-size: 15.5px;
+    }
+    @media (min-width: 720px){
+      .lead{ font-size: 16.5px; }
+    }
+
+    .divider{
+      height:1px;
+      margin: 18px 0 16px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+    }
+
+    /* ===== hint ===== */
+    .hint{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: max(14px, env(safe-area-inset-bottom));
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(10px);
+      color: rgba(230,236,255,.80);
+      font-size: 13px;
+      pointer-events:none;
+      user-select:none;
+      opacity:.92;
+      white-space:nowrap;
+    }
+    .hint .dot{
+      width:6px; height:6px; border-radius:999px;
+      background: rgba(243,210,139,.9);
+      box-shadow: 0 0 18px rgba(243,210,139,.45);
+      animation: blink 1.6s ease-in-out infinite;
+    }
+    @keyframes blink{ 0%,100%{ opacity:.25; } 50%{ opacity:1; } }
+
+    /* ===== sparkles ===== */
+    .sparkle{
+      position:fixed;
+      pointer-events:none;
+      width:8px; height:8px;
+      border-radius: 2px;
+      opacity:0;
+      transform: translate(-50%,-50%) scale(.8) rotate(0deg);
+      animation: pop 950ms ease forwards;
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.45));
+      background: white;
+    }
+    @keyframes pop{
+      0%{ opacity:0; transform: translate(-50%,-50%) scale(.55) rotate(0deg); }
+      20%{ opacity:1; }
+      100%{
+        opacity:0;
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.05) rotate(240deg);
+      }
+    }
+
+    /* ===== boarding pass (more “real”) ===== */
+    .passWrap{
+      margin-top: 18px;
+      display:grid;
+      gap:14px;
+    }
+    @media (min-width: 860px){
+      .passWrap{ grid-template-columns: 1fr; }
+    }
+
+    .pass{
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(700px 180px at 20% 0%, rgba(243,210,139,.14), transparent 60%),
+        radial-gradient(700px 220px at 80% 100%, rgba(185,216,255,.12), transparent 65%),
+        rgba(255,255,255,.04);
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+    }
+
+    /* perforation */
+    .pass .perfLine{
+      position:absolute; top:0; bottom:0; left: 72%;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(255,255,255,.22), transparent);
+      opacity:.75;
+    }
+    .pass .perfHoles{
+      position:absolute; top:0; bottom:0; left: calc(72% - 10px);
+      width: 20px;
+      background:
+        radial-gradient(circle at 50% 14px, rgba(5,8,20,1) 10px, transparent 11px),
+        radial-gradient(circle at 50% calc(100% - 14px), rgba(5,8,20,1) 10px, transparent 11px);
+      pointer-events:none;
+    }
+
+    .passHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      padding: 14px 14px 0;
+    }
+    .airline{
+      font-weight: 850;
+      letter-spacing:.16em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: rgba(243,210,139,.92);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .logoMark{
+      width:12px;height:12px;border-radius:3px;
+      background: linear-gradient(135deg, rgba(243,210,139,.95), rgba(185,216,255,.75));
+      box-shadow: 0 0 18px rgba(243,210,139,.35);
+    }
+    .chip{
+      font-size: 12px;
+      letter-spacing:.18em;
+      color: rgba(230,236,255,.70);
+      text-transform: uppercase;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      padding: 8px 10px;
+      border-radius: 999px;
+      white-space:nowrap;
+    }
+
+    .passBody{
+      display:grid;
+      grid-template-columns: 72% 28%;
+      gap:0;
+      padding: 10px 0 14px;
+    }
+    .main{ padding: 10px 14px 0; }
+    .route{
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .iata{
+      font-size: 36px;
+      font-weight: 950;
+      letter-spacing:.02em;
+      line-height:1;
+    }
+    .arrow{
+      color: rgba(185,216,255,.85);
+      font-weight: 950;
+      letter-spacing:.05em;
+    }
+    .cityLine{
+      margin-top:6px;
+      color: rgba(220,228,255,.72);
+      font-size: 13px;
+      letter-spacing:.02em;
+    }
+
+    .grid2{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+
+
+.kv{
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+   
+
+.kv .k{
+  font-size: 10px;
+  letter-spacing:.18em;
+  text-transform: uppercase;
+  color: rgba(220,228,255,.62);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.kv .v{
+  font-weight: 850;
+  color: rgba(245,247,255,.92);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+    .stub{
+      padding: 10px 12px 0;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:stretch;
+    }
+    .stubBox{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14);
+      border-radius: 14px;
+      padding: 10px 10px;
+      text-align:left;
+    }
+    .stubBox .k{
+      font-size: 10px;
+      letter-spacing:.20em;
+      text-transform: uppercase;
+      color: rgba(220,228,255,.62);
+      margin-bottom: 6px;
+    }
+    .stubBox .v{
+      font-weight: 950;
+      font-size: 15px;
+      letter-spacing:.02em;
+    }
+    .barcode{
+      height: 42px;
+      border-radius: 10px;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(245,247,255,.76) 0px,
+          rgba(245,247,255,.76) 2px,
+          transparent 2px,
+          transparent 5px
+        );
+      opacity:.55;
+      filter: blur(.1px);
+    }
+
+    .qr{
+      width: 92px;
+      height: 92px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        linear-gradient(90deg, transparent 50%, rgba(0,0,0,.08) 50%),
+        linear-gradient(transparent 50%, rgba(0,0,0,.08) 50%),
+        repeating-linear-gradient(90deg, rgba(245,247,255,.85) 0px, rgba(245,247,255,.85) 3px, transparent 3px, transparent 7px),
+        repeating-linear-gradient(0deg, rgba(245,247,255,.85) 0px, rgba(245,247,255,.85) 3px, transparent 3px, transparent 7px);
+      background-size: 10px 10px, 10px 10px, 100% 100%, 100% 100%;
+      opacity:.55;
+      align-self:flex-end;
+    }
+
+    .passFoot{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 12px 14px 14px;
+      border-top: 1px dashed rgba(255,255,255,.14);
+      color: rgba(220,228,255,.70);
+      font-size: 12px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+    }
+    .smallNote{ opacity:.9; }
+    .namePill{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      letter-spacing:.08em;
+      color: rgba(245,247,255,.90);
+      white-space:nowrap;
+    }
+
+    .segTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top: 18px;
+    }
+    .segTitle h2{ margin:0; font-size: clamp(24px, 3.2vw, 40px); line-height:1.06; }
+    .picker{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    .pillBtn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: rgba(245,247,255,.86);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 780;
+      letter-spacing:.04em;
+      cursor:pointer;
+      transition: transform .12s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pillBtn:hover{ transform: translateY(-1px); }
+    .pillBtn.active{
+      border-color: rgba(243,210,139,.28);
+      background: rgba(243,210,139,.10);
+      color: rgba(255,244,220,.92);
+    }
+
+    /* ===== photo blocks ===== */
+    .photoCard{
+      width:min(1000px, 100%);
+      border-radius: var(--radius);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow);
+      position:relative;
+      background: #070a16;
+    }
+    .photo{
+      height: clamp(280px, 50vh, 520px);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.02) contrast(1.02);
+      transform: scale(1.02);
+    }
+    .caption{
+      padding: 18px 18px 20px;
+      background: rgba(10, 14, 28, .56);
+      border-top: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+    }
+    .caption .title{
+      font-size: clamp(22px, 3vw, 34px);
+      margin: 0 0 8px;
+    }
+    .caption .lead{ margin:0; }
+
+    /* final tag */
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(243,210,139,.28);
+      background: rgba(243,210,139,.10);
+      color: rgba(255,244,220,.92);
+      font-weight: 850;
+      font-size: 12px;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      white-space:nowrap;
+      margin-left: 10px;
+    }
+
+    .no-select{ user-select:none; -webkit-user-select:none; }
+
+    @media (prefers-reduced-motion: reduce){
+      .page, .sheen, .snow { animation:none !important; transition:none !important; }
+      .sparkle{ display:none; }
+    }
+  </style>
+</head>
+
+<body class="no-select">
+  <div class="sheen" aria-hidden="true"></div>
+  <div class="snow" aria-hidden="true"></div>
+
+  <div class="stage" id="stage">
+
+    <!-- Page 0: Joke cover -->
+    <section class="page active" data-page="0">
+      <div class="card">
+        <div class="inner">
+          <h1 class="title">Hier gibt es nichts zu sehen.</h1>
+          <p class="lead" style="margin-top:10px; color: rgba(220,228,255,.70)">
+            (Wirklich gar nichts.)
+          </p>
+          <div class="divider"></div>
+          <p class="lead" style="color: rgba(243,210,139,.88)">
+            … oder doch?
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Page 1: Flights (real-ish boarding passes + passenger selector) -->
+    <section class="page" data-page="1">
+      <div class="card">
+        <div class="inner">
+
+          <div class="segTitle">
+            <h2>Frankfurt ↔ London.</h2>
+            <div class="picker" aria-label="Select passenger">
+              <div class="pillBtn active" data-passenger="SOPHIE">Sophie</div>
+              <div class="pillBtn" data-passenger="CHRISTIAN">Christian</div>
+              <div class="pillBtn" data-passenger="CHRISTINE">Christine</div>
+            </div>
+          </div>
+
+          <p class="lead" style="margin-top:10px">
+            Two flights. One winter weekend.
+          </p>
+
+          <div class="passWrap" aria-label="Flight tickets">
+            <!-- Outbound -->
+            <div class="pass" role="group" aria-label="Outbound flight BA909">
+              <div class="perfLine" aria-hidden="true"></div>
+              <div class="perfHoles" aria-hidden="true"></div>
+
+              <div class="passHead">
+                <div class="airline"><span class="logoMark"></span> British Airways</div>
+                <div class="chip" id="flightOut">BA909</div>
+              </div>
+
+              <div class="passBody">
+                <div class="main">
+                  <div class="route">
+                    <div class="iata">FRA</div>
+                    <div class="arrow">→</div>
+                    <div class="iata">LHR</div>
+                  </div>
+                  <div class="cityLine">Frankfurt · Germany → London Heathrow · United Kingdom</div>
+
+                  <div class="grid2">
+                    <div class="kv"><div class="k">Passenger</div><div class="v" id="paxNameOut">SOPHIE</div></div>
+                    <div class="kv"><div class="k">Date</div><div class="v">Fri 30 Jan 2026</div></div>
+
+                    <div class="kv"><div class="k">Terminal</div><div class="v" id="termOut">2</div></div>
+                    <div class="kv"><div class="k">Gate</div><div class="v" id="gateOut">A12</div></div>
+
+                    <div class="kv"><div class="k">Boarding</div><div class="v" id="boardOut">20:50</div></div>
+                    <div class="kv"><div class="k">Seat</div><div class="v" id="seatOut">18A</div></div>
+
+                    <div class="kv"><div class="k">Zone</div><div class="v" id="zoneOut">4</div></div>
+                    <div class="kv"><div class="k">Class</div><div class="v" id="classOut">Economy</div></div>
+                  </div>
+                </div>
+
+                <div class="stub">
+                  <div class="stubBox"><div class="k">Flight</div><div class="v">BA909</div></div>
+                  <div class="stubBox"><div class="k">From / To</div><div class="v">FRA · LHR</div></div>
+                  <div class="barcode" aria-hidden="true"></div>
+                </div>
+              </div>
+
+              <div class="passFoot">
+                <div class="smallNote">Issued for: <span class="namePill" id="namePillOut">SOPHIE</span></div>
+                <div class="smallNote">Boarding pass</div>
+              </div>
+            </div>
+
+            <!-- Return -->
+            <div class="pass" role="group" aria-label="Return flight BA910">
+              <div class="perfLine" aria-hidden="true"></div>
+              <div class="perfHoles" aria-hidden="true"></div>
+
+              <div class="passHead">
+                <div class="airline"><span class="logoMark"></span> British Airways</div>
+                <div class="chip" id="flightBack">BA910</div>
+              </div>
+
+              <div class="passBody">
+                <div class="main">
+                  <div class="route">
+                    <div class="iata">LHR</div>
+                    <div class="arrow">-</div>
+                    <div class="iata">FRA</div>
+                  </div>
+                  <div class="cityLine">London Heathrow · United Kingdom → Frankfurt · Germany</div>
+
+                  <div class="grid2">
+                    <div class="kv"><div class="k">Passenger</div><div class="v" id="paxNameBack">SOPHIE</div></div>
+                    <div class="kv"><div class="k">Date</div><div class="v">Sun 01 Feb 2026</div></div>
+
+                    <div class="kv"><div class="k">Terminal</div><div class="v" id="termBack">5</div></div>
+                    <div class="kv"><div class="k">Gate</div><div class="v" id="gateBack">B07</div></div>
+
+                    <div class="kv"><div class="k">Boarding</div><div class="v" id="boardBack">19:50</div></div>
+                    <div class="kv"><div class="k">Seat</div><div class="v" id="seatBack">18B</div></div>
+
+                    <div class="kv"><div class="k">Zone</div><div class="v" id="zoneBack">4</div></div>
+                    <div class="kv"><div class="k">Class</div><div class="v" id="classBack">Economy</div></div>
+                  </div>
+                </div>
+
+                <div class="stub">
+                  <div class="stubBox"><div class="k">Flight</div><div class="v">BA910</div></div>
+                  <div class="stubBox"><div class="k">From / To</div><div class="v">LHR · FRA</div></div>
+                  <div class="barcode" aria-hidden="true"></div>
+                </div>
+              </div>
+
+              <div class="passFoot">
+                <div class="smallNote">Issued for: <span class="namePill" id="namePillBack">SOPHIE</span></div>
+                <div class="smallNote">Boarding pass</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <p class="lead" style="color: rgba(220,228,255,.78)">
+            Keep going.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Page 2: Hotel (heading above image; text only once) -->
+    <section class="page" data-page="2">
+      <div class="photoCard">
+        <div class="caption">
+          <h2 class="title">A cozy place to stay in Paddington</h2>
+        </div>
+        <div class="photo" style="background-image:url('hotel.webp');"></div>
+        <div class="caption">
+          <p class="lead">A warm base for the weekend — close to the city, perfect for returning to the quiet.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Page 3: Concert (main reveal with your hall image) -->
+    <section class="page" data-page="3">
+      <div class="photoCard">
+        <div class="photo" style="background-image:url('hall.jpg'); background-position:center 42%;"></div>
+        <div class="caption">
+          <div class="eyebrow">
+            THE REASON <span class="tag">🎟️ 3 tickets</span>
+          </div>
+          <h2 class="title">BAFTA Games in Concert</h2>
+          <p class="lead">
+            A winter night in London, live game music, and all three of us together in the hall.
+          </p>
+          <div class="divider"></div>
+          <p class="lead" style="color: rgba(243,210,139,.92)">Merry Christmas. ✨</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const pages = Array.from(document.querySelectorAll(".page"));
+    const stage = document.getElementById("stage");
+    const hint = document.getElementById("hint");
+    const hintText = document.getElementById("hintText");
+
+    let current = 0;
+    let locked = false;
+
+    // Passenger data for a “real-ish” feel (consistent pattern, but obviously placeholder)
+    const PASSENGERS = {
+      SOPHIE:     { out: { seat:"18A", gate:"A12", term:"2", board:"07:20", zone:"4", cls:"Economy" },
+                    back:{ seat:"18B", gate:"B07", term:"5", board:"18:10", zone:"4", cls:"Economy" } },
+      CHRISTIAN:  { out: { seat:"18C", gate:"A12", term:"2", board:"07:20", zone:"4", cls:"Economy" },
+                    back:{ seat:"18D", gate:"B07", term:"5", board:"18:10", zone:"4", cls:"Economy" } },
+      CHRISTINE:  { out: { seat:"19A", gate:"A12", term:"2", board:"07:20", zone:"4", cls:"Economy" },
+                    back:{ seat:"19B", gate:"B07", term:"5", board:"18:10", zone:"4", cls:"Economy" } },
+    };
+
+    const paxOut = document.getElementById("paxNameOut");
+    const paxBack = document.getElementById("paxNameBack");
+    const namePillOut = document.getElementById("namePillOut");
+    const namePillBack = document.getElementById("namePillBack");
+
+    const seatOut = document.getElementById("seatOut");
+    const gateOut = document.getElementById("gateOut");
+    const termOut = document.getElementById("termOut");
+    const boardOut = document.getElementById("boardOut");
+    const zoneOut = document.getElementById("zoneOut");
+    const classOut = document.getElementById("classOut");
+
+    const seatBack = document.getElementById("seatBack");
+    const gateBack = document.getElementById("gateBack");
+    const termBack = document.getElementById("termBack");
+    const boardBack = document.getElementById("boardBack");
+    const zoneBack = document.getElementById("zoneBack");
+    const classBack = document.getElementById("classBack");
+
+    function setPassenger(key){
+      const data = PASSENGERS[key];
+      paxOut.textContent = key;
+      paxBack.textContent = key;
+      namePillOut.textContent = key;
+      namePillBack.textContent = key;
+
+      seatOut.textContent = data.out.seat;
+      gateOut.textContent = data.out.gate;
+      termOut.textContent = data.out.term;
+      boardOut.textContent = data.out.board;
+      zoneOut.textContent = data.out.zone;
+      classOut.textContent = data.out.cls;
+
+      seatBack.textContent = data.back.seat;
+      gateBack.textContent = data.back.gate;
+      termBack.textContent = data.back.term;
+      boardBack.textContent = data.back.board;
+      zoneBack.textContent = data.back.zone;
+      classBack.textContent = data.back.cls;
+    }
+
+    // Initialize
+    setPassenger("SOPHIE");
+
+    // Passenger picker clicks should not advance page
+    const pills = Array.from(document.querySelectorAll(".pillBtn"));
+    pills.forEach(p => {
+      p.addEventListener("click", (e) => {
+        e.stopPropagation();
+        pills.forEach(x => x.classList.remove("active"));
+        p.classList.add("active");
+        setPassenger(p.dataset.passenger);
+      }, { passive:false });
+      // On touch devices, also stop propagation
+      p.addEventListener("touchend", (e) => {
+        e.stopPropagation();
+      }, { passive:true });
+    });
+
+    function sparkleBurst(x, y, intensity=24) {
+      for (let i = 0; i < intensity; i++) {
+        const s = document.createElement("div");
+        s.className = "sparkle";
+        s.style.left = x + "px";
+        s.style.top = y + "px";
+        const dx = (Math.random()*260 - 130).toFixed(0) + "px";
+        const dy = (Math.random()*240 - 120).toFixed(0) + "px";
+        s.style.setProperty("--dx", dx);
+        s.style.setProperty("--dy", dy);
+
+        const size = 6 + Math.random()*7;
+        s.style.width = size + "px";
+        s.style.height = size + "px";
+
+        const tint = Math.random();
+        s.style.background = tint < 0.34 ? "rgba(243,210,139,.95)"
+                          : tint < 0.67 ? "rgba(185,216,255,.95)"
+                                       : "rgba(143,241,222,.95)";
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 980);
+      }
+    }
+
+    function setHintForPage(idx){
+      if (idx === 0) hintText.textContent = "… oder doch?";
+      else if (idx === pages.length - 1) hint.style.opacity = "0";
+      else hintText.textContent = "Tap / click / Space";
+    }
+
+    function showPage(nextIndex, originEvent=null){
+      if (locked) return;
+      if (nextIndex < 0 || nextIndex >= pages.length) return;
+
+      locked = true;
+
+      pages[current].classList.remove("active");
+      pages[nextIndex].classList.add("active");
+
+      const x = originEvent?.clientX ?? (window.innerWidth / 2);
+      const y = originEvent?.clientY ?? (window.innerHeight * 0.28);
+      const intensity = nextIndex === 3 ? 44 : 22;
+      sparkleBurst(x, y, intensity);
+
+      current = nextIndex;
+      //setHintForPage(current);
+
+      setTimeout(() => { locked = false; }, 950);
+    }
+
+    function advance(e=null){
+      const next = Math.min(current + 1, pages.length - 1);
+      if (next === current) return;
+      showPage(next, e);
+    }
+
+    // Click / tap anywhere (except passenger pills)
+    stage.addEventListener("click", (e) => advance(e), { passive: true });
+
+    // Spacebar
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        advance(e);
+      }
+    });
+
+    // Touch fallback
+    stage.addEventListener("touchend", (e) => {
+      const t = e.changedTouches && e.changedTouches[0];
+      advance(t ? { clientX: t.clientX, clientY: t.clientY } : null);
+    }, { passive: true });
+
+    setHintForPage(0);
+  </script>
+</body>
+</html>
